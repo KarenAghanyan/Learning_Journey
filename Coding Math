@@ -1,0 +1,585 @@
+#include<iostream>
+#include<string>
+#include<vector>
+#include<utility>
+template<typename T>
+void swapInVector(std::vector<T>& arr,int a, int b)
+{
+    T tmp = arr[a];
+    arr[a] = arr[b];
+    arr[b] = tmp;
+}
+
+int countOfEvens(const std::vector<int>& arr) //1st task
+{
+    int count{};
+    for (int i{}; i < arr.size(); ++i)
+    {
+        if (!(arr[i] % 2)) {
+            std::cout << "elem" << arr[i] << std::endl; ++count;
+        }
+    }
+    return count;
+}
+
+void task2(std::vector<int>& arr)
+{
+    int count{};
+    int num{};
+    for (int i{}; i < arr.size(); ++i)
+    {
+        num += arr[i];
+        ++count;
+    }
+
+    arr[4] = num / count;
+}
+
+
+template<typename T>
+void print(std::vector<T>& vec)
+{
+    int row = vec.size();
+    for (int i{}; i < row; ++i)
+    {
+        std::cout << vec[i] << "  ";
+    }
+    std::cout << std::endl;
+}
+
+int task3(std::vector<int> arr)
+{
+    int count{};
+    int num{};
+    for (int i{}; i < arr.size(); ++i)
+    {
+        num += arr[i];
+        ++count;
+    }
+    num /= count;
+    count = 0;
+    for (int i{}; i < arr.size(); ++i)
+    {
+        if (arr[i] > num) { ++count; }
+    }
+    return count;
+}
+
+void task4(std::vector<int>& arr)
+{
+    int max=arr[0];
+    int index{};
+     
+    for (int i=1; i < arr.size(); ++i)
+    {
+        if (max < arr[i])
+        {
+            max = arr[i];
+            index = i;
+        }
+    }
+    if (index != 0)
+    {
+        swapInVector(arr, 0, index);
+    }
+}
+
+void task5(std::vector<int> arr)
+{
+    int min=arr[0], minind = 0;
+    int max=arr[0], maxind = 0;
+    
+    for (int i = 1; i < arr.size(); ++i)
+    {
+        if (arr[i] > max)
+        {
+            max = arr[i];
+            maxind = i;
+        }
+        
+        if (arr[i] < min)
+        {
+            min = arr[i];
+            minind = i;
+        }
+    }
+    
+    if (minind != maxind)
+    {
+        swapInVector(arr, minind, maxind);
+    }
+}
+
+void task6(std::vector<int> arr)
+{
+    int evenCount{};
+    int oddCount{};
+    for (int i{}; i < arr.size(); ++i)
+    {
+        (arr[i] % 2) ? ++oddCount : ++evenCount;
+    }
+
+    if(evenCount==oddCount)
+    {
+        std::cout << "The quantity of even and odd numbers is equal " << evenCount << " of each" << std::endl;
+    }
+
+    if (evenCount < oddCount)
+    {
+        std::cout << "There are more odd than even numbers in the array, the quantity of even numbers is " << oddCount;
+    }
+    else
+    {
+        std::cout << "There are more even than odd numbers in the array, the quantity of even numbers is " << evenCount;
+    }
+}
+
+void task7(std::vector<double> arr)
+{
+    int count{};
+    for (int i = 1; i < arr.size(); ++i)
+    {
+        if (arr[0] < arr[i])
+        {
+            ++count;
+        }
+    }
+    std::cout << "The quantity of elements bigger than first one - " << count << std::endl;
+}
+
+void task8(std::vector<double>& arr)
+{
+    double min = arr[0];
+    int minind = 0;
+    double max = arr[0];
+    int maxind = 0;
+
+    for (int i = 1; i < arr.size(); ++i)
+    {
+        if (arr[i] > max)
+        {
+            max = arr[i];
+            maxind = i;
+        }
+
+        if (arr[i] < min)
+        {
+            min = arr[i];
+            minind = i;
+        }
+    }
+
+    std::cout << "The position of minimal element is - " << minind << std::endl;
+    std::cout << "The position of maximal element is - " << maxind << std::endl;
+}
+
+void task9(std::vector<double>& arr)
+{
+    int num{};
+    int size = arr.size();
+    for (int i{}; i < size; ++i)
+    {
+        num += arr[i];
+    }
+    num /= size;
+
+    for (int i{}; i < size; ++i)
+    {
+        arr[i] -=num;
+    }
+}
+
+void task10(std::vector<int>& arr)
+{
+    int num{}, count{};
+    for (int i{}; i < arr.size(); ++i)
+    {
+        if (arr[i] < 0) 
+        { 
+            num += -arr[i];
+            ++count;
+        }
+    }
+    num /= count;
+    count = 0;
+    for (int i{}; i < arr.size(); ++i)
+    {
+        if (arr[i] > num) { count += arr[i]; }
+    }
+}
+
+void task11(std::vector<int>& arr)
+{
+    int num{}, count{};
+    for (int i{}; i < arr.size(); ++i)
+    {
+        if (arr[i] > 0 && !(arr[i]%2))
+        {
+            num += arr[i];
+            ++count;
+        }
+    }
+}
+
+void task12(std::vector<double>& arr)
+{
+    int size = arr.size();
+    for (int i = 1; i < size; ++i)
+    {
+        int key = arr[i];
+        int j = i - 1;
+        while (j >= 0 and arr[j] < key)
+        {
+            arr[j + 1] = arr[j];
+            --j;
+        }
+        arr[j + 1] = key;
+    }
+
+    std::cout << "The sum of is - " << arr[0] + arr[size - 1];
+}
+
+void task13(std::vector<double>& arr)
+{
+    double min = arr[0];
+    double max = arr[0];
+    for (int i = 1; i < arr.size(); ++i)
+    {
+        if (arr[i] > max)
+        {
+            max = arr[i];
+        }
+
+        if (arr[i] < min)
+        {
+            min = arr[i];
+        }
+    }
+    std::cout <<"the difference is - "<< max - min << std::endl <<"the sum is - " << max + min << std::endl;
+}
+
+void task14(std::vector<int>& arr)
+{
+    int num{};
+    for (int i{}; i < arr.size(); ++i)
+    {
+        if ((arr[i] % 2)==1) { num += arr[i]; }
+    }
+ 
+    for (int i{}; i < arr.size(); ++i)
+    {
+        if (arr[i]<-2 or arr[i]>2)
+        {
+            if (!(arr[i] % 3))
+            {
+                arr[i] = num;
+            }
+            
+        }
+    }
+}
+
+void task15(std::vector<int>& arr)
+{
+    int size = arr.size();
+    int half = size / 2;
+    for (int i = 1; i < half; ++i)
+    {
+        int key = arr[i];
+        int j = i - 1;
+        while (j >= 0 and arr[j] > key)
+        {
+            arr[j + 1] = arr[j];
+            --j;
+        }
+        arr[j + 1] = key;
+    }
+    
+    for (int i = half + 1; i < size; ++i)
+    {
+        int key = arr[i];
+        int j = i - 1;
+        while (j >= half and arr[j] < key)
+        {
+            arr[j + 1] = arr[j];
+            --j;
+        }
+        arr[j + 1] = key;
+    }
+}
+
+
+void task16(std::vector<int>& arr)
+{
+    double min = arr[0];
+    int minind = 0;
+    double max = arr[0];
+    int maxind = 0;
+
+    for (int i = 1; i < arr.size(); ++i)
+    {
+        if (arr[i] > max)
+        {
+            max = arr[i];
+            maxind = i;
+        }
+
+        if (arr[i] < min)
+        {
+            min = arr[i];
+            minind = i;
+        }
+    }
+    std::cout << abs(minind - maxind) - 1; 
+}
+
+void task17(std::vector<int>& arr)
+{
+    long long sum=1;
+    int count{};
+    int negative{};
+    for (int i = 0; i < arr.size(); ++i)
+    {
+        if (arr[i] < 0) { ++negative; }
+        if (arr[i] > 0) { sum *= arr[i]; }
+        ++count;
+    }
+
+}
+
+void task18(std::vector<int>& arr)
+{
+    double min = arr[0];
+    double max = arr[0];
+
+    for (int i = 1; i < arr.size(); ++i)
+    {
+        if (arr[i] > max)
+        {
+            max = arr[i];
+        }
+
+        if (arr[i] < min)
+        {
+            min = arr[i];
+        }
+    }
+    
+    std::cout << "The number range is from " << min << " to " << max << std::endl;
+}
+
+int task19(std::vector<int>& arr)
+{
+    int sum{};
+    for (int i = 1; i < arr.size(); ++i)
+    {
+        if (arr[i] < 0)
+        {
+            return sum;
+        }
+        sum += arr[i];
+    }
+}
+
+void task20(std::vector<int>& arr)
+{
+    int count{};
+    for (int i{}; i < arr.size(); ++i)
+    {
+        if (arr[i] < -2 or arr[i]>2)
+        {
+            if (!(arr[i] % 3))
+            {
+                arr[i] = 0;
+                ++count;
+            }
+
+        }
+    }
+    std::cout <<"The number of changes: "<< count;
+}
+
+void task21(std::vector<double>& arr)
+{
+    double min{};
+    int ind{};
+    for (int i = 1; i < arr.size(); ++i)
+    {
+        if (arr[i] < min)
+        {
+            min = arr[i];
+            ind = i;
+        }
+    }
+    arr[ind]*=3;
+    swapInVector(arr, ind, arr.size() - 1);
+}
+
+void task22(std::vector<double>& arr)
+{
+    int size = arr.size();
+    for (int i = 1; i < size; ++i)
+    {
+        int key = arr[i];
+        int j = i - 1;
+        while (j >= 0 and arr[j] < key)
+        {
+            arr[j + 1] = arr[j];
+            --j;
+        }
+        arr[j + 1] = key;
+    }
+}
+
+void task23(std::vector<int>& arr)
+{
+    int sum = 1;
+    int indexCount = (arr.size() / 2) - 1;
+    for (int i{}; i < arr.size(); ++i)
+    {
+        if ((arr[i] % 2) - 1 == 1)
+        {
+            sum *= arr[i];
+        }
+    }
+
+    std::cout << "Numver of elements with even index is " << indexCount << std::endl;
+    std::cout << "Numver of odd elements by value is " << sum << std::endl;
+}
+
+void task24(std::vector<double>& arr)
+{
+    long long sum{};
+    int count {};
+    int size = arr.size() - 1;
+    for (int i{}; i <= size; ++i)
+    {
+        if (arr[i] < arr[size])
+        {
+            sum += arr[i];
+            ++count;
+        }
+    }
+    std::cout << sum << count;
+}
+
+void task25(std::vector<int>& arr)
+{
+    
+    int sum{};
+    int size = arr.size() - 1;
+    for (int i{}; i <= size; ++i)
+    {
+        if (arr[i] > 0)
+        {
+            sum += arr[i];
+            
+        }
+    }
+    
+    for (int i{}; i <= size; ++i)
+    {
+        arr[i] -= sum;
+    }
+}
+
+void task26(std::vector<double>& arr)
+{
+    double pos = 1;
+    double neg = 1;
+    for (int i{}; i < arr.size(); ++i)
+    {
+        if (arr[i] > 0)
+        {
+            pos *= arr[i];
+        }
+        else if (arr[i] < 0)
+        {
+            neg *= abs(arr[i]);
+        }
+        std::cout << "Difference is " << abs(pos - neg);
+    }
+}
+
+void task27(std::vector<int>& arr)
+{
+    int max = arr[0];
+    for (int i = 1; i < arr.size(); ++i)
+    {
+        if (arr[i] < max)
+        {
+            max = arr[i];
+        }
+
+    }
+    for (int i{}; i < arr.size(); ++i)
+    {
+        if (!(arr[i] % 2))
+        {
+            arr[i] = max;
+        }
+    }
+}
+
+void task28(std::vector<int>& arr)
+{
+    int sum{};
+    int mod{};
+    int count{};
+    for (int i{}; i < arr.size(); ++i)
+    {
+        if (arr[i] > 0)
+        {
+            sum += arr[i];
+            ++count;
+        }
+    }
+
+    sum /= count;
+    count = 0;
+    for (int i{}; i < arr.size(); ++i)
+    {
+        if (abs(arr[i])>sum)
+        {
+            mod+=arr[i];
+            ++count;
+        }
+    }
+    std::cout << mod << count;
+}
+
+void task30(std::vector<double>& arr)
+{
+    double min{};
+    int ind{};
+    for (int i = 1; i < arr.size(); ++i)
+    {
+        if (arr[i] < min)
+        {
+            min = arr[i];
+            ind = i;
+        }
+    }
+
+    std::cout << min << ind;
+}
+
+int main()
+{
+    int size{};
+    std::cin >> size;
+    std::vector<double> arr{};
+    for (int i{}; i < size; ++i)
+    {
+        arr.push_back(rand()%200 - 100.3);
+    }
+    std::cout << "The given array is ";
+    print(arr);  //Prints the given array
+    
+    task22(arr);  //Each function is a different task, so to check the task invoke the function you want to check
+   
+    std::cout << "The new array is ";
+    print(arr);  //Prints the new array  P.S. Not every function chages the given array
+    
+    return 0;
+}
