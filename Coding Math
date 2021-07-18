@@ -548,6 +548,24 @@ void task28(std::vector<int>& arr)
     std::cout << mod << count;
 }
 
+void task29(std::vector<double>& arr)
+{
+    int neg{};
+    int pos=1;
+    for (int i{}; i < arr.size(); ++i)
+    {
+        if (arr[i] < 0)
+        {
+            neg += abs(arr[i]);
+        }
+        if (arr[i] > 0)
+        {
+            pos *= arr[i];
+        }
+     }
+     std::cout << pos /= neg;
+}
+
 void task30(std::vector<double>& arr)
 {
     double min{};
