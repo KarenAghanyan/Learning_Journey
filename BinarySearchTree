@@ -1,0 +1,345 @@
+#pragma once
+#include <iostream>
+#include <queue>
+
+template <typename T>
+class BSTree {
+
+	struct node {
+		node* left;
+		node* right;
+		T data;
+		node(T data)
+		{
+			this->data = data;
+			left = nullptr;
+			right = nullptr;
+		}
+	};
+
+
+public:
+
+	BSTree();
+	BSTree(T);
+	BSTree(std::initializer_list<T>);
+	~BSTree();
+
+	void insert(T data)
+	{
+		__insert(root, data); 
+	}
+
+	void inorderPrint()
+	{
+		__inorder(root);
+		std::cout << std::endl;
+	}
+
+	void preorderPrint()
+	{
+		__preorder(root);
+		std::cout << std::endl;
+	}
+
+	void postorderPrint()
+	{
+		__postorder(root);
+		std::cout << std::endl;
+	}
+
+	void levelorderPrint()
+	{
+		__levelorder(root);
+		std::cout << std::endl;
+	}
+
+	void deleteTheChild(T data)
+	{
+		__deleteTheChild(data, root);
+	}
+
+private:
+
+	node* root;
+
+private:
+
+	void __insert(node*, T);
+
+	void __inorder(node*);
+
+	void __preorder(node*);
+
+	void __postorder(node*);
+
+	void __levelorder(node*);
+
+	void __postorderDelete(node*);
+
+	void __deleteTheChild(T data, node* cur);
+
+	void __rootDelete(node*);
+
+	void __nodeDelete(node* cur, node* parent);
+};
+
+template <typename T>
+BSTree<T>::BSTree()
+{
+	root = nullptr;
+}
+
+template <typename T>
+BSTree<T>::BSTree(T data)
+{
+	root = new node(data);
+}
+
+template <typename T>
+BSTree<T>::BSTree(std::initializer_list<T> list)
+{
+	for (T elem : list)
+	{
+		this->insert(elem);
+	}
+}
+
+template <typename T>
+BSTree<T>::~BSTree()
+{
+	__postorderDelete(root);
+}
+
+template <typename T>
+void BSTree<T>::__insert(node* cur, T data)
+{
+	if (!root)
+	{
+		root = new node(data);
+		return;
+	}
+
+	if (!cur)
+	{
+		cur = new node(data);
+		return;
+	}
+
+	if (cur->data == data)
+	{
+		return;
+	}
+
+	if (cur->data > data)
+	{
+		if (!cur->left)
+		{
+			cur->left = new node(data);
+			return;
+		}
+		__insert(cur->left, data);
+	}
+
+	if (cur->data < data)
+	{
+		if (!cur->right)
+		{
+			cur->right = new node(data);
+			return;
+		}
+		__insert(cur->right, data);
+	}
+}
+
+template <typename T>
+void BSTree<T>::__inorder(node* cur)
+{
+	if (cur == nullptr)
+	{
+		return;
+	}
+	__inorder(cur->left);
+	std::cout << cur->data;
+	__inorder(cur->right);
+}
+
+template <typename T>
+void BSTree<T>::__preorder(node* cur)
+{
+	if (cur == nullptr)
+	{
+		return;
+	}
+	std::cout << cur->data;
+	__preorder(cur->left);
+	__preorder(cur->right);
+}
+
+template <typename T>
+void BSTree<T>::__postorder(node* cur)
+{
+	if (cur == nullptr)
+	{
+		return;
+	}
+	__postorder(cur->left);
+	__postorder(cur->right);
+	std::cout << cur->data << " ";
+}
+
+template <typename T>
+void BSTree<T>::__postorderDelete(node* cur)
+{
+	if (cur == nullptr)
+	{
+		return;
+	}
+	__postorderDelete(cur->left);
+	__postorderDelete(cur->right);
+	delete cur;
+}
+
+template <typename T>
+void BSTree<T>::__levelorder(node* cur)
+{
+	if (!cur)
+		return;
+	std::queue<node*> arr;
+	arr.push(cur);
+	while (!arr.empty())
+	{
+		if (arr.front()->left)
+			arr.push(arr.front()->left);
+		if (arr.front()->right)
+			arr.push(arr.front()->right);
+		std::cout << arr.front()->data << " ";
+		arr.pop();
+	}
+}
+
+template <typename T>
+void BSTree<T>::__deleteTheChild(T data, node* cur)   
+{
+	if (root == nullptr)
+	{
+		return;
+	}
+
+	if (root->data == data)
+	{
+		__rootDelete(root);
+		return;
+	}
+
+	node* parent{};
+	while (cur and cur->data != data)
+	{
+		if (cur->data > data)
+		{
+			parent = cur;
+			cur = cur->left;
+		}
+		else if (cur->data < data)
+		{
+			parent = cur;
+			cur = cur->right;
+		}
+	}
+
+	if (cur)
+	{
+		__nodeDelete(cur, parent);
+	}	
+}
+
+template <typename T>
+void BSTree<T>::__rootDelete(node* cur)
+{
+	if (!cur->right and !cur->left)
+	{
+		delete cur;
+		root = nullptr;
+		return;
+	}
+
+	if (!cur->left)
+	{
+		node* tmp = cur->right;
+		delete cur;
+		root = tmp;
+		return;
+	}
+
+	if (!cur->right)
+	{
+		node* tmp = cur->left;
+		delete cur;
+		root = tmp;
+		return;
+	}
+
+	node* tmp = cur->right;
+	while (tmp->left)
+	{
+		tmp = tmp->left;
+	}
+	tmp->left = cur->left;
+	root = cur->right;
+	delete cur;
+}
+
+template <typename T>
+void BSTree<T>::__nodeDelete(node* cur, node* parent)
+{
+
+	if (!cur->right and !cur->left)
+	{
+		if (cur->data < parent->data)
+		{
+			
+			delete cur;
+			parent->left = nullptr;
+		}
+		else
+		{
+			delete cur;
+			parent->right = nullptr;
+		}
+		
+		return;
+	}
+
+	if (!cur->left)
+	{
+		node* tmp = cur->right;
+		delete cur;
+		cur = tmp;
+		return;
+	}
+
+	if (!cur->right)
+	{
+		node* tmp = cur->left;
+		delete cur;
+		cur = tmp;
+		return;
+	}
+
+	node* tmp = cur->right;
+	while (tmp->left)
+	{
+		tmp = tmp->left;
+	}
+	tmp->left = cur->left;
+	if (parent->data > cur->data)
+	{
+		parent->left = cur->right;
+	}
+	else
+	{
+		parent->right = cur->right;
+	}
+	
+	delete cur;
+}
