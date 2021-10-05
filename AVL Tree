@@ -1,0 +1,423 @@
+
+#include <iostream>
+#include <queue>
+
+template <typename T>
+class AVL {
+
+	struct node {
+		T data;
+		node* left;
+		node* right;
+		int height;
+		node(T data) 
+			/*: data(data)
+			, left{}
+			,right{}
+			height( 1 )*/
+		{
+			this->data =data;
+			left = nullptr;
+			right = nullptr;
+			height=1;
+		}
+	};
+
+public:
+	AVL();
+	AVL(T);
+	AVL(std::initializer_list<T>);
+	~AVL();
+public:
+	void insert(const T& data)
+	{
+		__insert(root, data);
+	}
+	void inorderPrint()
+	{
+		__inorder(root);
+		std::cout << std::endl;
+	}
+	void preorderPrint()
+	{
+		__preorder(root);
+		std::cout << std::endl;
+	}
+	void postorderPrint()
+	{
+		__postorder(root);
+		std::cout << std::endl;
+	}
+	void levelorderPrint()
+	{
+		__levelorder(root);
+		std::cout << std::endl;
+	}
+	void deleteTheChild(const T& data)
+	{
+		__deleteTheChild(data, root);
+	}
+private:
+	node* root;
+private:
+	void __insert(node*&, const T&);
+	int __maxHeight(int, int);
+	int __nodeHeight(node*);
+	int __balanceFactor(node*);
+	void __leftRotate(node*&);
+	void __rightRotate(node*&);
+	void __inorder(node*);
+	void __preorder(node*);
+	void __postorder(node*);
+	void __levelorder(node*);
+	void __postorderDelete(node*);
+	void __deleteTheChild(T data, node* cur);
+	void __rootDelete(node*);
+	void __nodeDelete(node* cur, node* parent);
+};
+
+template <typename T>
+AVL<T>::AVL() : root{ nullptr }
+{
+}
+
+template <typename T>
+AVL<T>::AVL(T data) : root{ new node(data)}
+{
+}
+
+template <typename T>
+AVL<T>::AVL(std::initializer_list<T> list)
+{
+	for (T elem : list)
+	{
+		this->insert(elem);
+	}
+}
+
+template <typename T>
+AVL<T>::~AVL()
+{
+	__postorderDelete(root);
+}
+
+template <typename T>
+void AVL<T>::__insert(node*& cur, const T& data)
+{
+	if (!root)
+	{
+		root = new node(data);
+		return;
+	}
+	else if (!cur)
+	{
+		cur = new node(data);
+		return;
+	}
+	else if (cur->data == data)
+	{
+		return;
+	}
+	else if (cur->data > data)
+	{
+		if (!cur->left)
+		{
+			cur->left = new node(data);
+			cur->height = (__nodeHeight(cur) + 1);
+			return;
+		}
+		__insert(cur->left, data);
+		cur->height = (__nodeHeight(cur) + 1);
+	}
+	else if (cur->data < data)
+	{
+		if (!cur->right)
+		{
+			cur->right = new node(data);
+			cur->height = (__nodeHeight(cur) +1);
+			return;
+		}
+		__insert(cur->right, data);
+		cur->height = (__nodeHeight(cur) + 1);
+	}
+	cur->height = (1 + __maxHeight(__nodeHeight(cur->left), __nodeHeight(cur->right)));
+	int bf = __balanceFactor(cur);
+
+	// Left Left Case
+	if (bf > 1 && data < cur->left->data)
+	{
+		__rightRotate(cur);
+	}
+	// Right Right Case
+	if (bf < -1 && data > cur->right->data)
+	{
+		__leftRotate(cur);
+	}
+	// Left Right Case
+	if (bf > 1 && data > cur->left->data)
+	{
+		__leftRotate(cur->left);
+		__rightRotate(cur);
+	}
+
+	// Right Left Case
+	if (bf < -1 && data < cur->right->data)
+	{
+		__rightRotate(cur->right);
+		__leftRotate(cur);
+	}
+}
+
+template <typename T>
+int AVL<T>::__balanceFactor(node* cur)
+{
+	return (__nodeHeight(cur->left) - __nodeHeight(cur->right));
+}
+
+template <typename T>
+int AVL<T>::__maxHeight(int a, int b)
+{
+	return (a >= b) ? a : b;
+}
+
+template <typename T>
+int AVL<T>::__nodeHeight(node* cur)
+{
+	if (!cur)
+	{
+		return 0;
+	}
+
+	return cur->height;
+}
+
+template <typename T>
+void AVL<T>::__rightRotate(node*& cur)
+{
+
+	node* tmp1 = cur->left;
+	node* tmp2 = tmp1->right;
+
+	tmp1->right = cur;
+	cur->left = tmp2;
+	
+	cur->height = __maxHeight(__nodeHeight(cur->left), __nodeHeight(cur->right))+1;
+	tmp1->height = __maxHeight(__nodeHeight(tmp1->left), __nodeHeight(tmp1->right))+1;
+
+	cur = tmp1;
+	std::cout << "right rotation" << std::endl;
+}
+
+template <typename T>
+void AVL<T>::__leftRotate(node*& cur)
+{
+
+	node* tmp1 = cur->right;
+	node* tmp2 = tmp1->left;
+
+	tmp1->left = cur;
+	cur->right = tmp2;
+
+	cur->height = __maxHeight(__nodeHeight(cur->left), __nodeHeight(cur->right))+1;
+	tmp1->height = __maxHeight(__nodeHeight(tmp1->left), __nodeHeight(tmp1->right)+1);
+	
+	cur = tmp1;
+}
+
+template <typename T>
+void AVL<T>::__inorder(node* cur)
+{
+	if (cur == nullptr)
+	{
+		return;
+	}
+	__inorder(cur->left);
+	std::cout << cur->data << " ";
+	__inorder(cur->right);
+}
+
+template <typename T>
+void AVL<T>::__preorder(node* cur)
+{
+	if (cur == nullptr)
+	{
+		return;
+	}
+	std::cout << cur->data << " ";
+	__preorder(cur->left);
+	__preorder(cur->right);
+}
+
+template <typename T>
+void AVL<T>::__postorder(node* cur)
+{
+	if (cur == nullptr)
+	{
+		return;
+	}
+	__postorder(cur->left);
+	__postorder(cur->right);
+	std::cout << cur->data << " ";
+}
+
+template <typename T>
+void AVL<T>::__postorderDelete(node* cur)
+{
+	if (cur == nullptr)
+	{
+		return;
+	}
+	__postorderDelete(cur->left);
+	__postorderDelete(cur->right);
+	delete cur;
+}
+
+template <typename T>
+void AVL<T>::__levelorder(node* cur)
+{
+	if (!cur)
+		return;
+	std::queue<node*> arr;
+	arr.push(cur);
+	while (!arr.empty())
+	{
+		if (arr.front()->left)
+			arr.push(arr.front()->left);
+		if (arr.front()->right)
+			arr.push(arr.front()->right);
+		std::cout << arr.front()->data << " :data/height : "<< arr.front()->height <<" ";
+		arr.pop();
+	}
+}
+
+template <typename T>
+void AVL<T>::__deleteTheChild(T data, node* cur)
+{
+	if (root == nullptr)
+	{
+		return;
+	}
+	if (root->data == data)
+	{
+		__rootDelete(root);
+		return;
+	}
+
+	node* parent{};
+	while (cur and cur->data != data)
+	{
+		if (cur->data > data)
+		{
+			parent = cur;
+			cur = cur->left;
+		}
+		else if (cur->data < data)
+		{
+			parent = cur;
+			cur = cur->right;
+		}
+	}
+	if (cur)
+	{
+		__nodeDelete(cur, parent);
+	}
+}
+
+template <typename T>
+void AVL<T>::__rootDelete(node* cur)
+{
+	if (!cur->right and !cur->left)
+	{
+		delete cur;
+		root = nullptr;
+		return;
+	}
+	if (!cur->left)
+	{
+		node* tmp = cur->right;
+		delete cur;
+		root = tmp;
+		return;
+	}
+	if (!cur->right)
+	{
+		node* tmp = cur->left;
+		delete cur;
+		root = tmp;
+		return;
+	}
+	node* tmp = cur->right;
+	while (tmp->left)
+	{
+		tmp = tmp->left;
+	}
+	tmp->left = cur->left;
+	root = cur->right;
+	delete cur;
+}
+
+template <typename T>
+void AVL<T>::__nodeDelete(node* cur, node* parent)
+{
+	if (!cur->right and !cur->left)
+	{
+		if (cur->data < parent->data)
+		{
+
+			delete cur;
+			parent->left = nullptr;
+		}
+		else
+		{
+			delete cur;
+			parent->right = nullptr;
+		}
+		return;
+	}
+	if (!cur->left)
+	{
+		node* tmp = cur->right;
+		delete cur;
+		cur = tmp;
+		return;
+	}
+	if (!cur->right)
+	{
+		node* tmp = cur->left;
+		delete cur;
+		cur = tmp;
+		return;
+	}
+	node* tmp = cur->right;
+	while (tmp->left)
+	{
+		tmp = tmp->left;
+	}
+	tmp->left = cur->left;
+	if (parent->data > cur->data)
+	{
+		parent->left = cur->right;
+	}
+	else
+	{
+		parent->right = cur->right;
+	}
+	delete cur;
+}
+
+
+
+int main() {
+	AVL<int> tree{ 10 };
+	tree.levelorderPrint();
+	tree.insert(20);
+	tree.levelorderPrint();
+	tree.insert(30);
+	tree.levelorderPrint();
+	tree.insert(40);
+	tree.levelorderPrint();
+	tree.insert(50);
+	tree.levelorderPrint();
+	tree.insert(60);
+	tree.levelorderPrint();
+}
