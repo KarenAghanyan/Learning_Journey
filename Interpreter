@@ -1,0 +1,135 @@
+#include <iostream>
+#include <string>
+#include <vector>
+
+struct item
+{
+	item(std::string name, bool isFolder, item* bptr)
+	{
+		this->name = name;
+		this->isFolder = isFolder;
+		this->bptr = bptr;
+		this->fptr = nullptr;
+	}
+
+	std::string name;
+	item* fptr;
+	item* bptr;
+	bool isFolder;
+	std::vector<item*> vec;
+	std::string file;
+};
+
+class Terminal
+{
+public:
+	Terminal()
+	{
+		current_location = &root;
+		
+		while (working)
+		{
+			std::cin >> tmpc>>tmps;
+			parse(tmpc, tmps);
+			tmpc = "";
+			tmps = "";
+		}
+
+	}
+
+	~Terminal()
+	{
+		working = false;
+	};
+
+	void parse(std::string tmpc, std::string tmps)
+	{
+		if (tmpc == "ls")
+		{
+			print(current_location);
+		}
+		else if (tmpc == "cd")
+		{
+			for (int i = 0; i < current_location->vec.size(); ++i)
+			{
+				if (tmps == current_location->vec[i]->name)
+				{
+					open(current_location->vec[i]);
+				}
+			}
+		}
+		else if (tmpc == "cd..")
+		{
+			current_location = current_location->bptr;
+		}
+		else if (tmpc == "touch")
+		{
+			createfile(current_location,tmps,false);
+		}
+		else if (tmpc == "mkdir")
+		{
+			createFolder(current_location, tmps, true);
+		}
+		else if (tmpc == "exit")
+		{
+			Terminal::~Terminal();
+		}
+	}
+	
+	void open(item* it)
+	{
+		if (it->isFolder)
+		{
+			current_location = it;
+		}
+		else
+		{
+			std::cout << it->file;
+		}	
+	}
+
+	void print(item* it)
+	{
+		if(it->isFolder)
+		{
+			for (int i = 0; i < it->vec.size(); ++i)
+			{
+				std::cout << it->vec[i]->name << std::endl;
+			}
+		}
+		else
+		{
+			std::cout << it->file;
+		}
+	}
+
+	void createfile(item* it, std::string nameoffile, bool isFolder)
+	{
+		it->vec.push_back(new item(nameoffile, false, it));
+	}
+
+	void createFolder(item* it, std::string nameoffolder, bool isFolder)
+	{
+		it->vec.push_back(new item(nameoffolder, true, it));
+	}
+
+	void goback()
+	{
+		current_location = current_location->bptr;
+	}
+	
+	bool working{true};
+	std::string tmpc;
+	std::string tmps;
+	item root{"root", true, nullptr};
+	item* current_location;
+	const item* root_adress{ &root };
+};
+
+
+int main()
+{
+	Terminal start;
+
+	return 0;
+}
